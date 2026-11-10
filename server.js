@@ -1,10 +1,10 @@
 import express from 'express';
 const app = express();
 
-// Middleware para servir los archivos estáticos de tu frontend
+// Servir archivos estáticos del frontend (HTML, CSS, JS)
 app.use(express.static('.'));
 
-// Ruta de información del backend
+// Endpoint para verificar estado del servidor
 app.get('/api/info', (req, res) => {
   res.json({
     mensaje: "Bienvenido al backend de tu generador de paletas",
@@ -12,12 +12,12 @@ app.get('/api/info', (req, res) => {
   });
 });
 
-// NUEVO: Manejo básico para cuando buscan una ruta que NO existe (Control de errores / Fallos)
+// Manejo de rutas no encontradas (Error 404)
 app.use((req, res) => {
   res.status(404).send("¡Ups! La página o ruta que buscas no existe en este servidor.");
 });
 
-// Definimos el puerto del servidor
+// Inicializar el puerto y levantar el servidor
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Servidor backend corriendo en http://localhost:${PORT}`);

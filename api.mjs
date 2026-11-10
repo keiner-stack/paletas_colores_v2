@@ -1,4 +1,4 @@
-// nuestro objeto con funcion de diccionario
+// Diccionario de traducción de colores comunes a Hexadecimal
 const colores = {
   rojo: 'FF0000',
   azul: '0000FF',
@@ -13,21 +13,25 @@ const colores = {
   cafe: 'A52A2A',
 };
 
+// Función para pedir la paleta a la API externa
 export async function pedirPaletaAPI(colorIngresado) {
+  // Convertir a minúsculas y buscar en el diccionario o usar la entrada directa
   const colorMinuscula = colorIngresado.toLowerCase();
   const colorHex = colores[colorMinuscula] || colorIngresado;
-  //pedir la informacion a la API usando fetch
+
+  // Hacer la petición asíncrona a TheColorAPI
   const respuesta = await fetch(
     `https://www.thecolorapi.com/scheme?hex=${colorHex}&mode=monochrome&count=5`
   );
-  //tiene mucha info
+
   const datos = await respuesta.json();
-  //la info que necesitamos
+
+  // Extraer únicamente los códigos Hexadecimales de la respuesta
   const listaColores = [];
-  //scar los codigos hex 
   for (let i = 0; i < datos.colors.length; i = i + 1) {
     const colorObtenido = datos.colors[i].hex.value;
     listaColores.push(colorObtenido);
   }
+
   return listaColores;
 }

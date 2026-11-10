@@ -1,7 +1,8 @@
 import { pedirPaletaAPI } from './api.mjs';
 
-// --- 1. PERSISTENCIA Y CARGA DE TEMA (Bootstrap) ---
+// Carga inicial del DOM y restauración de persistencia
 document.addEventListener("DOMContentLoaded", () => {
+    // Restaurar tema guardado en localStorage
     const html = document.documentElement;
     const modoGuardado = localStorage.getItem("modoColor");
     
@@ -14,19 +15,20 @@ document.addEventListener("DOMContentLoaded", () => {
         btnCambiarTema.addEventListener("click", alternarTema);
     }
 
-    // Cargar última búsqueda guardada en localStorage
+    // Cargar última búsqueda guardada
     const ultima = localStorage.getItem("ultimaBusqueda");
     if (ultima && inputBusqueda) {
         inputBusqueda.value = ultima;
     }
 
-    // Opcional: Leer sessionStorage al cargar la página
+    // Mostrar contador temporal de sesión en consola
     const contadorSesion = sessionStorage.getItem("cantidadBusquedas");
     if (contadorSesion && contadorSesion > 0) {
         console.log(`Llevas ${contadorSesion} búsquedas realizadas en esta pestaña.`);
     }
 });
 
+// Función para cambiar entre modo oscuro y claro
 function alternarTema() {
     const html = document.documentElement;
     const temaActual = html.getAttribute("data-bs-theme");
@@ -36,12 +38,13 @@ function alternarTema() {
     localStorage.setItem("modoColor", nuevoTema);
 }
 
-// --- 2. LÓGICA DE BÚSQUEDA Y PINTADO DE PALETA ---
+// Referencias a elementos de la interfaz
 const btnBuscar = document.getElementById("btnBuscar");
 const inputBusqueda = document.getElementById("inputBusqueda");
 const textoMensaje = document.getElementById("textoMensaje");
 const resultadoPaleta = document.getElementById("resultadoPaleta");
 
+// Generar tarjetas de colores dinámicamente en el HTML
 function mostrarPaleta(listaColores) {
     resultadoPaleta.innerHTML = '';
     const contenedor = document.createElement('div');
@@ -66,10 +69,12 @@ function mostrarPaleta(listaColores) {
     resultadoPaleta.appendChild(contenedor);
 }
 
+// Evento de clic para la búsqueda de paleta
 if (btnBuscar) {
     btnBuscar.addEventListener("click", async () => {
         const termino = inputBusqueda.value.trim();
 
+        // Validar que no esté vacío
         if (termino === "") {
             textoMensaje.className = "text-warning fw-bold";
             textoMensaje.textContent = "Por favor, escribe algo para buscar.";
@@ -80,26 +85,23 @@ if (btnBuscar) {
             textoMensaje.className = "text-muted";
             textoMensaje.textContent = "Buscando paleta...";
 
-            // Llamada real a la API y dibujado de colores
+            // Consultar la API y pintar resultados
             const listaColores = await pedirPaletaAPI(termino);
             mostrarPaleta(listaColores);
 
             textoMensaje.className = "text-success fw-bold";
             textoMensaje.textContent = "¡Paleta encontrada con éxito!";
             
-            // --- PERSISTENCIA ---
-            // 1. Guardamos la última búsqueda de forma permanente
+            // Guardar término en localStorage
             localStorage.setItem("ultimaBusqueda", termino);
 
-            // 2. Incrementamos el contador temporal en sessionStorage para esta sesión
+            // Incrementar contador de sesión en sessionStorage
             let contadorSesion = parseInt(sessionStorage.getItem("cantidadBusquedas")) || 0;
             contadorSesion++;
             sessionStorage.setItem("cantidadBusquedas", contadorSesion);
 
         } catch (error) {
             console.error("Error al buscar la paleta:", error);
-            
-            // Manejo de error visual con clases de Bootstrap
             textoMensaje.className = "text-danger fw-bold";
             textoMensaje.textContent = "Ocurrió un error al conectar con el servidor.";
         }

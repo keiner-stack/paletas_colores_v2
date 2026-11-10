@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscador de Paletas</title>
     
-    <!-- Tu Bootstrap CSS en la versión 5.3.8 -->
+    <!-- Bootstrap 5.3 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="container py-5">
@@ -14,24 +14,24 @@
         <div class="col-md-6 text-center">
             <h1 class="mb-4">Buscador de Paletas de Colores</h1>
             
-            <!-- Formulario de búsqueda -->
+            <!-- Campo de entrada y botón de búsqueda -->
             <div class="input-group mb-3">
                 <input type="text" id="inputBusqueda" class="form-control" placeholder="Escribe el nombre de la paleta...">
                 <button class="btn btn-primary" id="btnBuscar">Buscar</button>
             </div>
 
-            <!-- Botón opcional para cambiar de tema (Oscuro/Claro) -->
+            <!-- Botón de cambio de tema -->
             <button class="btn btn-outline-secondary btn-sm mb-3" id="btnCambiarTema">Cambiar Tema 🌓</button>
 
-            <!-- Mensaje de estado / errores -->
+            <!-- Mensajes de estado -->
             <p id="textoMensaje" class="mt-2"></p>
 
-            <!-- Contenedor para los resultados -->
+            <!-- Resultados visuales -->
             <div id="resultadoPaleta" class="mt-4"></div>
         </div>
     </div>
 
-    <!-- Tu script principal con type="module" -->
+    <!-- Script principal en módulo ES6 -->
     <script type="module" src="./funcion.mjs"></script>
 </body>
 </html>
