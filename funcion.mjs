@@ -1,52 +1,107 @@
 import { pedirPaletaAPI } from './api.mjs';
 
-const botonBuscar = document.querySelector('#btn-buscar');
-const inputColor = document.querySelector('#input-color');
-const contenedorPaleta = document.querySelector('#contenedor-paleta');
-const textoMensaje = document.querySelector('#mensaje');
+// --- 1. PERSISTENCIA Y CARGA DE TEMA (Bootstrap) ---
+document.addEventListener("DOMContentLoaded", () => {
+    const html = document.documentElement;
+    const modoGuardado = localStorage.getItem("modoColor");
+    
+    if (modoGuardado) {
+        html.setAttribute("data-bs-theme", modoGuardado);
+    }
 
-// Persistencia en el navegador: recupera el último color buscado (Diapositiva 4)
-window.addEventListener('DOMContentLoaded', () => {
-  const ultimoColor = localStorage.getItem('ultimoColorBuscado');
-  if (ultimoColor) {
-    inputColor.value = ultimoColor;
-  }
+    const btnCambiarTema = document.getElementById("btnCambiarTema");
+    if (btnCambiarTema) {
+        btnCambiarTema.addEventListener("click", alternarTema);
+    }
+
+    // Cargar última búsqueda guardada en localStorage
+    const ultima = localStorage.getItem("ultimaBusqueda");
+    if (ultima && inputBusqueda) {
+        inputBusqueda.value = ultima;
+    }
+
+    // Opcional: Leer sessionStorage al cargar la página
+    const contadorSesion = sessionStorage.getItem("cantidadBusquedas");
+    if (contadorSesion && contadorSesion > 0) {
+        console.log(`Llevas ${contadorSesion} búsquedas realizadas en esta pestaña.`);
+    }
 });
 
-function mostrarPaletaEnPantalla(listaColores) {
-  contenedorPaleta.textContent = '';
-  for (let i = 0; i < listaColores.length; i++) {
-    const color = listaColores[i];
-
-    const tarjeta = document.createElement('div');
-    tarjeta.className = 'tarjeta-color shadow-sm';
-    tarjeta.style.backgroundColor = color;
-
-    const textoColor = document.createElement('p');
-    textoColor.textContent = color;
-
-    tarjeta.appendChild(textoColor);
-    contenedorPaleta.appendChild(tarjeta);
-  }
+function alternarTema() {
+    const html = document.documentElement;
+    const temaActual = html.getAttribute("data-bs-theme");
+    const nuevoTema = temaActual === "dark" ? "light" : "dark";
+    
+    html.setAttribute("data-bs-theme", nuevoTema);
+    localStorage.setItem("modoColor", nuevoTema);
 }
 
-botonBuscar.addEventListener('click', async function () {
-  const colorIngresado = inputColor.value.trim();
-  if (colorIngresado === '') {
-    textoMensaje.textContent = 'Por favor ingresar un color.';
-    return;
-  }
-  
-  // Guardamos el color en localStorage (Diapositiva 4)
-  localStorage.setItem('ultimoColorBuscado', colorIngresado);
+// --- 2. LÓGICA DE BÚSQUEDA Y PINTADO DE PALETA ---
+const btnBuscar = document.getElementById("btnBuscar");
+const inputBusqueda = document.getElementById("inputBusqueda");
+const textoMensaje = document.getElementById("textoMensaje");
+const resultadoPaleta = document.getElementById("resultadoPaleta");
 
-  textoMensaje.textContent = 'Cargando paleta...';
+function mostrarPaleta(listaColores) {
+    resultadoPaleta.innerHTML = '';
+    const contenedor = document.createElement('div');
+    contenedor.className = 'd-flex flex-wrap justify-content-center gap-3';
 
-  try {
-    const listaColores = await pedirPaletaAPI(colorIngresado);
-    mostrarPaletaEnPantalla(listaColores);
-    textoMensaje.textContent = '¡Paleta generada correctamente!';
-  } catch (error) {
-    textoMensaje.textContent = 'Ocurrió un error al buscar la paleta.';
-  }
-});
+    listaColores.forEach(color => {
+        const tarjeta = document.createElement('div');
+        tarjeta.style.backgroundColor = color;
+        tarjeta.style.width = '100px';
+        tarjeta.style.height = '100px';
+        tarjeta.style.borderRadius = '8px';
+        tarjeta.className = 'd-flex align-items-end justify-content-center p-2 shadow-sm';
+
+        const etiqueta = document.createElement('span');
+        etiqueta.textContent = color;
+        etiqueta.className = 'badge bg-dark text-white';
+
+        tarjeta.appendChild(etiqueta);
+        contenedor.appendChild(tarjeta);
+    });
+
+    resultadoPaleta.appendChild(contenedor);
+}
+
+if (btnBuscar) {
+    btnBuscar.addEventListener("click", async () => {
+        const termino = inputBusqueda.value.trim();
+
+        if (termino === "") {
+            textoMensaje.className = "text-warning fw-bold";
+            textoMensaje.textContent = "Por favor, escribe algo para buscar.";
+            return;
+        }
+
+        try {
+            textoMensaje.className = "text-muted";
+            textoMensaje.textContent = "Buscando paleta...";
+
+            // Llamada real a la API y dibujado de colores
+            const listaColores = await pedirPaletaAPI(termino);
+            mostrarPaleta(listaColores);
+
+            textoMensaje.className = "text-success fw-bold";
+            textoMensaje.textContent = "¡Paleta encontrada con éxito!";
+            
+            // --- PERSISTENCIA ---
+            // 1. Guardamos la última búsqueda de forma permanente
+            localStorage.setItem("ultimaBusqueda", termino);
+
+            // 2. Incrementamos el contador temporal en sessionStorage para esta sesión
+            let contadorSesion = parseInt(sessionStorage.getItem("cantidadBusquedas")) || 0;
+            contadorSesion++;
+            sessionStorage.setItem("cantidadBusquedas", contadorSesion);
+
+        } catch (error) {
+            console.error("Error al buscar la paleta:", error);
+            
+            // Manejo de error visual con clases de Bootstrap
+            textoMensaje.className = "text-danger fw-bold";
+            textoMensaje.textContent = "Ocurrió un error al conectar con el servidor.";
+        }
+    });
+}

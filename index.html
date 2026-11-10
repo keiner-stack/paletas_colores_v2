@@ -1,35 +1,37 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-bs-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generador de Paleta de Colores</title>
-  <!-- Bootstrap CSS básico (Diapositiva 1) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Paletas</title>
+    
+    <!-- Tu Bootstrap CSS en la versión 5.3.8 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="container py-4">
+<body class="container py-5">
 
-  <header class="mb-4 text-center">
-    <h1 class="fw-bold">Generador de Paleta de Colores</h1>
-  </header>
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h1 class="mb-4">Buscador de Paletas de Colores</h1>
+            
+            <!-- Formulario de búsqueda -->
+            <div class="input-group mb-3">
+                <input type="text" id="inputBusqueda" class="form-control" placeholder="Escribe el nombre de la paleta...">
+                <button class="btn btn-primary" id="btnBuscar">Buscar</button>
+            </div>
 
-  <main>
-    <section class="card p-4 shadow-sm mb-4">
-      <label for="input-color" class="form-label fw-bold">Ingresa un color (ej. rojo, azul, o FF0000):</label>
-      <div class="input-group mb-3">
-        <input id="input-color" type="text" class="form-control" placeholder="Ej. rojo">
-        <button id="btn-buscar" class="btn btn-primary" type="button">Buscar Paleta</button>
-      </div>
-      <p id="mensaje" class="fw-bold text-secondary"></p>
-    </section>
+            <!-- Botón opcional para cambiar de tema (Oscuro/Claro) -->
+            <button class="btn btn-outline-secondary btn-sm mb-3" id="btnCambiarTema">Cambiar Tema 🌓</button>
 
-    <section class="card p-4 shadow-sm">
-      <h2 class="h5 mb-3">Resultados:</h2>
-      <div id="contenedor-paleta" class="d-flex flex-wrap gap-3"></div>
-    </section>
-  </main>
+            <!-- Mensaje de estado / errores -->
+            <p id="textoMensaje" class="mt-2"></p>
 
-  <script type="module" src="funcion.mjs"></script>
+            <!-- Contenedor para los resultados -->
+            <div id="resultadoPaleta" class="mt-4"></div>
+        </div>
+    </div>
+
+    <!-- Tu script principal con type="module" -->
+    <script type="module" src="./funcion.mjs"></script>
 </body>
 </html>
