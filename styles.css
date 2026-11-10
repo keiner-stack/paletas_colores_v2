@@ -1,0 +1,47 @@
+/* Variables CSS para mantener consistencia visual (Diapositiva 2) */
+:root {
+  --color-fondo: #f4f4f4;
+  --color-principal: #0d6efd;
+  --color-texto: #333333;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+/* Microinteracciones básicas en botones */
+button {
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Tarjetas con transición UX/UI */
+.tarjeta-color {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd;
+  transition: transform 0.2s ease;
+}
+
+.tarjeta-color:hover {
+  transform: translateY(-4px);
+}
+
+.tarjeta-color p {
+  background-color: #ffffff;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0;
+}
